@@ -46,9 +46,18 @@ Groceries · Household · Personal · Other
 ### Urgent
 Anyone may toggle; save/urgent-on → household ping
 
+## Round-3 locks
+
+- Default currency: **HKD**
+- Monthly totals: **calendar month**
+- Invite: **link + code**, webpage join
+- Max members: **10**
+- Empty Today: **push Add need**
+- Brand: English product name only (UI still EN + 繁中)
+
 ## Visual — warmer home
-Soft peach mist + leaf green atmosphere; deep teal accent; soft apricot highlights; friendly UI grotesque + distinctive brand display. See `wireframes/index.html`.
+Soft peach mist + leaf green atmosphere; deep teal accent; soft apricot highlights; friendly UI grotesque + distinctive brand display. See `wireframes/index.html` and Figma hi-fi.
 
 ## Figma
-Pending MCP auth → create Design file under user’s team and push hi-fi frames matching these screens.
+https://www.figma.com/design/pQsMRDfj2A0gfs8aSO2tTO/Household-Communicator-Hi-fi-v1
 EOF

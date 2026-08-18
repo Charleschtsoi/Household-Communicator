@@ -1,66 +1,62 @@
-# Household Communicator — Design Brief v1.1 (Locked)
+# Household Communicator — Design Brief v1.2 (Locked)
 
-Status: V1 rules locked including cost-light · Figma hi-fi pending MCP auth (2026-08-18)
+Status: V1 product + product rules locked · Figma hi-fi live (2026-08-18)
 
 Notion: [Design Brief](https://app.notion.com/p/3c07161f126181dda618c3dcf3e74cab)
 
 ## Product one-liner
 
-Household Communicator is a mobile-web household board for shared purchase needs—who’s buying what—with optional amounts, simple monthly spend totals, and optional “I’m out / back by” notes. No tracking. No chore police.
+Household Communicator is a **webpage** (mobile-web first + desktop) household board for shared purchase needs—who’s buying what—with optional amounts, calendar-month spend totals (HKD), and optional “I’m out / back by” notes. No tracking. No chore police.
 
-## Locked decisions (rounds 1–2)
+## Locked decisions (rounds 1–3)
 
 | Topic | Decision |
 |--------|----------|
 | Primary job | Shared shopping / “what we need”; presence secondary |
-| Household | Family, partners, roommates sharing needs + cost |
+| Household | Family, partners, roommates sharing needs + cost · **max 10 members** |
 | Needs model | Categories · qty · claim (reassignable) · recurring auto-reopen · urgent |
 | Categories V1 | Groceries / Household / Personal / Other |
-| Claim | Single claim; can be **reassigned** to someone else |
-| Urgent | **Anyone** can mark urgent → household ping |
-| Bought | Leaves open list **immediately**; record + cost kept for history/DB |
-| Recurring | **Auto-reopen on schedule** |
-| Cost | **Light:** optional amount on Bought + simple monthly totals per member |
+| Claim | Single claim; reassignable |
+| Urgent | Anyone → household ping |
+| Bought | Archive off open list immediately; keep record/cost |
+| Recurring | Auto-reopen on schedule |
+| Cost | Light: optional amount on Bought + **calendar-month** totals |
+| Currency default | **HKD** |
 | Presence | Free-text place + optional back-by + soft status; no GPS/map/forced ETA |
 | Notifications | Urgent needs only |
-| Platform / i18n | Mobile web first + desktop; EN + 繁體中文 |
+| Invite | **Link + code** (web join flow) |
+| Empty Today | **Push Add need** (not a passive empty state) |
+| Platform | Webpage · mobile first + desktop |
+| i18n | EN + 繁體中文 UI · **product name stays English** |
 | Brand | Household Communicator |
-| Visual | **Warmer home** (inviting domestic utility—not chore-gamification, not purple SaaS) |
+| Visual | Warmer home |
 | Exclusions | Chores, gamification, chat, GPS, clinical |
 
 ## Cost-light rules
 
-1. Mark Bought sheet: who bought (default = claimer or self) + **optional amount** + currency (household default).
-2. Skipping amount is allowed (item still archives).
-3. **This month** totals on Household: sum of logged amounts per member + household total.
-4. No splits, IOUs, or settlement math in V1.
-5. Archived bought rows remain queryable for future richer cost views.
+1. Mark Bought: who bought + optional amount; currency defaults to **HKD**.
+2. Skipping amount allowed (still archives).
+3. **This calendar month** totals per member + household total (household timezone later if needed; V1 assume creator locale).
+4. No splits / IOUs / settlement in V1.
 
-## Claim / reassign
+## Invite (web)
 
-- Open → Claim (sets `claimedBy`)
-- Claimed → **Reassign** (pick another member) or Claim myself
-- Claimed → Bought (archives; optional amount)
+- Short code **and** shareable link
+- Join is webpage-based (no native app required for V1)
 
-## Recurring
+## Empty Today
 
-- Cadence: weekly / biweekly / monthly
-- On Bought: archive current instance; schedule next `open` occurrence automatically
+When there are no urgent/open needs and no shared presence: primary CTA **Add need** (and secondary invite if household < 2).
 
-## Visual direction (warmer home)
+## Cap
 
-- Atmosphere: soft peach mist + leaf green (not flat cream + terracotta cliché)
-- Accent: deep teal-green; soft apricot for highlights
-- Type: friendly grotesque for UI + distinctive display for brand wordmark
-- Motion later: soft presence chip fade, list settle on Bought
+Household membership hard-stops at **10**. Invite UI disables with a clear message when full.
 
 ## Figma
 
-- Hi-fi file: https://www.figma.com/design/pQsMRDfj2A0gfs8aSO2tTO/Household-Communicator-Hi-fi-v1
-- Page: Mobile Hi-fi v1
-- Frames: O1 Welcome · O2 Create · O3 Invite · O4 First need · T1 Today · N1 Needs · N3 Mark Bought · P1 Presence · H1 Household · Cover
+https://www.figma.com/design/pQsMRDfj2A0gfs8aSO2tTO/Household-Communicator-Hi-fi-v1
 
 ## 60s success
 
-Create household → invite → add first need.
+Create household → invite via link/code → add first need.
 EOF
