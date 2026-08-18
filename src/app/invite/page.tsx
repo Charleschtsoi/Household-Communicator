@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { getHouseholdBundle, getMember } from "@/lib/store";
 import { t } from "@/lib/i18n";
 import { CopyInvite } from "@/components/copy-invite";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { SessionRecovery } from "@/components/session-recovery";
 
 export default async function InvitePage() {
@@ -18,6 +19,7 @@ export default async function InvitePage() {
 
   return (
     <main className="flex min-h-dvh flex-col px-5 pb-8 pt-14">
+      <LanguageSwitcher locale={member.locale} next="/invite" />
       <h1 className="font-[family-name:var(--font-bricolage)] text-[1.75rem] font-bold tracking-tight">
         {d.inviteHousehold}
       </h1>

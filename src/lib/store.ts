@@ -356,7 +356,7 @@ export async function clearPresence(memberId: string) {
 export async function setMemberLocale(memberId: string, locale: Locale) {
   const db = await readDb();
   const member = db.members.find((m) => m.id === memberId);
-  if (!member) throw new Error("MEMBER_NOT_FOUND");
+  if (!member) return null;
   member.locale = locale;
   await writeDb(db);
   return member;

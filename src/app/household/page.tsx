@@ -2,8 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/bottom-nav";
 import { CopyInvite } from "@/components/copy-invite";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { SessionRecovery } from "@/components/session-recovery";
-import { setLocaleAction, signOutAction } from "@/lib/actions";
+import { signOutAction } from "@/lib/actions";
 import { getSession } from "@/lib/session";
 import { getHouseholdBundle, getMember, monthSpendTotals } from "@/lib/store";
 import { t } from "@/lib/i18n";
@@ -90,35 +91,8 @@ export default async function HouseholdPage() {
         <div className="grid gap-2">
           <div className="rounded-2xl border border-line bg-white p-3">
             <div className="font-semibold">{d.language}</div>
-            <div className="mt-2 flex gap-2">
-              <form action={setLocaleAction}>
-                <input type="hidden" name="locale" value="en" />
-                <input type="hidden" name="next" value="/household" />
-                <button
-                  type="submit"
-                  className={`rounded-full border px-3 py-1 text-xs font-bold ${
-                    member.locale === "en"
-                      ? "border-accent bg-accent-soft text-accent"
-                      : "border-line bg-white"
-                  }`}
-                >
-                  English
-                </button>
-              </form>
-              <form action={setLocaleAction}>
-                <input type="hidden" name="locale" value="zh-Hant" />
-                <input type="hidden" name="next" value="/household" />
-                <button
-                  type="submit"
-                  className={`rounded-full border px-3 py-1 text-xs font-bold ${
-                    member.locale === "zh-Hant"
-                      ? "border-accent bg-accent-soft text-accent"
-                      : "border-line bg-white"
-                  }`}
-                >
-                  繁體中文
-                </button>
-              </form>
+            <div className="mt-2">
+              <LanguageSwitcher locale={member.locale} next="/household" compact />
             </div>
           </div>
           <div className="rounded-2xl border border-line bg-white p-3">
@@ -130,7 +104,7 @@ export default async function HouseholdPage() {
 
       <form action={signOutAction} className="mb-4">
         <button type="submit" className="text-sm font-bold text-muted underline">
-          Sign out
+          {d.signOut}
         </button>
       </form>
 

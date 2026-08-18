@@ -140,17 +140,35 @@ export async function clearPresenceAction() {
   redirect("/today");
 }
 
+function safeNextPath(raw: string) {
+  if (!raw.startsWith("/") || raw.startsWith("//")) return "";
+  return raw;
+}
+
 export async function setLocaleAction(formData: FormData) {
   const session = await getSession();
   const locale = localeSchema.parse(String(formData.get("locale") || "en")) as Locale;
-  const next = String(formData.get("next") || "").trim();
+  const next = safeNextPath(String(formData.get("next") || "").trim());
   if (session) {
     await setMemberLocale(session.memberId, locale);
-    revalidatePath("/", "layout");
   }
   const { cookies } = await import("next/headers");
   const jar = await cookies();
   jar.set("hc_locale", locale, { path: "/", maxAge: 60 * 60 * 24 * 365 });
+  revalidatePath("/", "layout");
+  for (const path of [
+    "/",
+    "/create",
+    "/join",
+    "/invite",
+    "/today",
+    "/needs",
+    "/needs/new",
+    "/presence",
+    "/household",
+  ]) {
+    revalidatePath(path);
+  }
   redirect(next || (session ? "/household" : "/"));
 }
 

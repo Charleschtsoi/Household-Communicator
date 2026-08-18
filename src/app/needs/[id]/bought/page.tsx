@@ -56,7 +56,7 @@ export default async function BoughtPage({
           <input
             name="amount"
             inputMode="decimal"
-            placeholder="28.50"
+            placeholder={d.amountPlaceholder}
             className="h-11 rounded-xl border border-line bg-white px-3 text-sm font-medium"
           />
         </label>

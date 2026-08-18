@@ -2,9 +2,9 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { joinHouseholdAction } from "@/lib/actions";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { getSession } from "@/lib/session";
-import { t } from "@/lib/i18n";
-import type { Locale } from "@/lib/types";
+import { parseLocale, t } from "@/lib/i18n";
 
 export default async function JoinPage({
   searchParams,
@@ -18,7 +18,7 @@ export default async function JoinPage({
     if (member) redirect("/today");
     // Orphan session: stay on join rather than looping through /today
   }
-  const locale = ((await cookies()).get("hc_locale")?.value as Locale) || "en";
+  const locale = parseLocale((await cookies()).get("hc_locale")?.value);
   const d = t(locale);
   const params = await searchParams;
   const error =
@@ -27,11 +27,12 @@ export default async function JoinPage({
       : params.error === "INVITE_NOT_FOUND"
         ? d.inviteNotFound
         : params.error
-          ? params.error
+          ? d.joinFailed
           : null;
 
   return (
     <main className="flex min-h-dvh flex-col px-5 pb-8 pt-14">
+      <LanguageSwitcher locale={locale} next="/join" />
       <h1 className="font-[family-name:var(--font-bricolage)] text-[1.75rem] font-bold tracking-tight">
         {d.joinHousehold}
       </h1>

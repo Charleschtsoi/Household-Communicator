@@ -4,6 +4,8 @@ const en = {
   brand: "Household Communicator",
   tagline:
     "Know what the house needs, who’s buying it, and—only if you want—where you’ve stepped out to.",
+  metaDescription:
+    "Shared household shopping needs, optional presence, and light spend totals.",
   getStarted: "Get started",
   createHousehold: "Create household",
   householdName: "Household name",
@@ -20,8 +22,10 @@ const en = {
   firstNeed: "First need",
   item: "Item",
   quantity: "Quantity",
+  qty: "qty",
   category: "Category",
   urgent: "Urgent (pings everyone)",
+  urgentChip: "Urgent",
   recurring: "Recurring staple",
   cadence: "Cadence",
   addToList: "Add to list",
@@ -52,6 +56,7 @@ const en = {
   presenceHint: "Only what you choose. No GPS. No live map. Back-by is optional.",
   status: "Status",
   place: "Place",
+  placePlaceholder: "Market / office / gym",
   backBy: "Back by",
   save: "Save",
   imHome: "I’m home — clear",
@@ -61,6 +66,8 @@ const en = {
   members: "Members",
   settings: "Settings",
   language: "Language",
+  langEnglish: "English",
+  langZhHant: "繁體中文",
   presencePrivacy: "Presence",
   presencePrivacyHint: "Share only when you choose · no GPS",
   joinHousehold: "Join household",
@@ -68,6 +75,7 @@ const en = {
   inviteAgain: "Invite again",
   householdFull: "This household is full (max 10).",
   inviteNotFound: "Invite code not found.",
+  joinFailed: "Could not join. Try again.",
   unclaimed: "unclaimed",
   weekly: "Weekly",
   biweekly: "Biweekly",
@@ -85,6 +93,13 @@ const en = {
   filtersOpen: "Open",
   filtersClaimed: "Claimed",
   filtersRecurring: "Recurring",
+  signOut: "Sign out",
+  sessionResetTitle: "Session needs a reset",
+  sessionResetBody:
+    "Your browser still has a login cookie, but the household data for this demo wasn’t available on this request. Start fresh to create or join again.",
+  startOver: "Start over",
+  clearCookiesViaReset: "Or clear cookies via /api/reset",
+  amountPlaceholder: "28.50",
 };
 
 type Dict = typeof en;
@@ -92,6 +107,7 @@ type Dict = typeof en;
 const zh: Dict = {
   ...en,
   tagline: "知道家裡需要買什麼、誰去買——以及（如果你願意分享）你外出到哪裡。",
+  metaDescription: "家庭共用購物需求、可選外出狀態，以及輕量花費統計。",
   getStarted: "開始使用",
   createHousehold: "建立家庭",
   householdName: "家庭名稱",
@@ -108,8 +124,10 @@ const zh: Dict = {
   firstNeed: "第一個需求",
   item: "項目",
   quantity: "數量",
+  qty: "數量",
   category: "分類",
   urgent: "緊急（通知所有人）",
+  urgentChip: "緊急",
   recurring: "定期必需品",
   cadence: "週期",
   addToList: "加入清單",
@@ -139,6 +157,7 @@ const zh: Dict = {
   presenceHint: "只分享你願意公開的內容。無 GPS、無即時地圖，預計回家時間可選。",
   status: "狀態",
   place: "地點",
+  placePlaceholder: "超市 / 辦公室 / 健身房",
   backBy: "預計回來",
   save: "儲存",
   imHome: "我回家了 — 清除",
@@ -148,6 +167,8 @@ const zh: Dict = {
   members: "成員",
   settings: "設定",
   language: "語言",
+  langEnglish: "English",
+  langZhHant: "繁體中文",
   presencePrivacy: "外出狀態",
   presencePrivacyHint: "你選擇分享才會顯示 · 無 GPS",
   joinHousehold: "加入家庭",
@@ -155,6 +176,7 @@ const zh: Dict = {
   inviteAgain: "再次邀請",
   householdFull: "這個家庭已滿（最多 10 人）。",
   inviteNotFound: "找不到邀請碼。",
+  joinFailed: "無法加入，請再試一次。",
   unclaimed: "未認領",
   weekly: "每週",
   biweekly: "每兩週",
@@ -172,10 +194,25 @@ const zh: Dict = {
   filtersOpen: "未認領",
   filtersClaimed: "已認領",
   filtersRecurring: "定期",
+  signOut: "登出",
+  sessionResetTitle: "需要重新開始",
+  sessionResetBody:
+    "瀏覽器仍保留登入 Cookie，但這個示範環境目前讀不到家庭資料。請重新開始以建立或加入家庭。",
+  startOver: "重新開始",
+  clearCookiesViaReset: "或透過 /api/reset 清除 Cookie",
+  amountPlaceholder: "28.50",
 };
 
 export function t(locale: Locale): Dict {
   return locale === "zh-Hant" ? zh : en;
+}
+
+export function parseLocale(value: string | undefined | null): Locale {
+  return value === "zh-Hant" ? "zh-Hant" : "en";
+}
+
+export function htmlLang(locale: Locale): string {
+  return locale === "zh-Hant" ? "zh-Hant" : "en";
 }
 
 export function categoryLabel(locale: Locale, category: Category) {

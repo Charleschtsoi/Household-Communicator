@@ -39,7 +39,7 @@ export default async function PresencePage() {
           <input
             name="placeText"
             defaultValue={current?.placeText || ""}
-            placeholder="Market / office / gym"
+            placeholder={d.placePlaceholder}
             className="h-11 rounded-xl border border-line bg-white px-3 text-sm font-medium"
           />
         </label>
