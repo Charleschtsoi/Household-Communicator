@@ -149,24 +149,6 @@ export async function importHouseholdBootstrap(raw: string) {
   return incoming.households[0];
 }
 
-function addMonths(iso: string, months: number) {
-  const d = new Date(iso);
-  d.setMonth(d.getMonth() + months);
-  return d.toISOString();
-}
-
-function addDays(iso: string, days: number) {
-  const d = new Date(iso);
-  d.setDate(d.getDate() + days);
-  return d.toISOString();
-}
-
-function nextRecurringDate(fromIso: string, cadence: RecurringCadence) {
-  if (cadence === "weekly") return addDays(fromIso, 7);
-  if (cadence === "biweekly") return addDays(fromIso, 14);
-  return addMonths(fromIso, 1);
-}
-
 export async function createHousehold(input: {
   householdName: string;
   displayName: string;

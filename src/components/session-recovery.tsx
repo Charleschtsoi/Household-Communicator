@@ -18,6 +18,12 @@ export function SessionRecovery() {
           Start over
         </button>
       </form>
+      <a
+        href="/api/reset"
+        className="mt-3 text-center text-sm font-bold text-accent underline"
+      >
+        Or clear cookies via /api/reset
+      </a>
     </main>
   );
 }

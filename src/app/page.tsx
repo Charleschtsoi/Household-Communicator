@@ -2,13 +2,21 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
+import { getMember } from "@/lib/store";
 import { t } from "@/lib/i18n";
 import type { Locale } from "@/lib/types";
 import { setLocaleAction } from "@/lib/actions";
+import { SessionRecovery } from "@/components/session-recovery";
 
 export default async function WelcomePage() {
   const session = await getSession();
-  if (session) redirect("/today");
+  if (session) {
+    const member = await getMember(session.memberId);
+    // Only enter the app when household data is actually available.
+    // Orphan session cookies must NOT bounce / ↔ /today forever.
+    if (member) redirect("/today");
+    return <SessionRecovery />;
+  }
 
   const jar = await cookies();
   const locale = (jar.get("hc_locale")?.value as Locale) || "en";

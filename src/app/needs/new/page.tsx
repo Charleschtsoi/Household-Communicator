@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { addNeedAction } from "@/lib/actions";
+import { SessionRecovery } from "@/components/session-recovery";
 import { getSession } from "@/lib/session";
 import { getMember } from "@/lib/store";
 import { t } from "@/lib/i18n";
@@ -10,7 +11,7 @@ export default async function NewNeedPage() {
   const session = await getSession();
   if (!session) redirect("/");
   const member = await getMember(session.memberId);
-  if (!member) redirect("/");
+  if (!member) return <SessionRecovery />;
   const d = t(member.locale);
 
   return (
