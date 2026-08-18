@@ -4,14 +4,16 @@ import { getSession } from "@/lib/session";
 import { getHouseholdBundle, getMember } from "@/lib/store";
 import { t } from "@/lib/i18n";
 import { CopyInvite } from "@/components/copy-invite";
+import { SessionRecovery } from "@/components/session-recovery";
 
 export default async function InvitePage() {
   const session = await getSession();
   if (!session) redirect("/");
   const member = await getMember(session.memberId);
-  if (!member) redirect("/");
-  const bundle = await getHouseholdBundle(session.householdId);
-  if (!bundle) redirect("/");
+  const bundle = member ? await getHouseholdBundle(session.householdId) : null;
+  if (!member || !bundle) {
+    return <SessionRecovery />;
+  }
   const d = t(member.locale);
 
   return (
@@ -25,7 +27,12 @@ export default async function InvitePage() {
         <div className="mt-1 font-[family-name:var(--font-bricolage)] text-[1.75rem] font-bold tracking-[0.2em]">
           {bundle.household.inviteCode}
         </div>
-        <CopyInvite code={bundle.household.inviteCode} label={d.copyLink} copiedLabel={d.copied} />
+        <CopyInvite
+          code={bundle.household.inviteCode}
+          bootstrap={bundle.bootstrap}
+          label={d.copyLink}
+          copiedLabel={d.copied}
+        />
       </div>
       <div className="mt-6 grid gap-3">
         <Link

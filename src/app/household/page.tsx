@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/bottom-nav";
 import { CopyInvite } from "@/components/copy-invite";
+import { SessionRecovery } from "@/components/session-recovery";
 import { setLocaleAction, signOutAction } from "@/lib/actions";
 import { getSession } from "@/lib/session";
 import { getHouseholdBundle, getMember, monthSpendTotals } from "@/lib/store";
@@ -12,9 +13,8 @@ export default async function HouseholdPage() {
   const session = await getSession();
   if (!session) redirect("/");
   const member = await getMember(session.memberId);
-  if (!member) redirect("/");
-  const bundle = await getHouseholdBundle(session.householdId);
-  if (!bundle) redirect("/");
+  const bundle = member ? await getHouseholdBundle(session.householdId) : null;
+  if (!member || !bundle) return <SessionRecovery />;
   const d = t(member.locale);
   const { totals, householdTotal } = monthSpendTotals(bundle.needs, bundle.members);
   const full = bundle.members.length >= MAX_HOUSEHOLD_MEMBERS;
@@ -75,6 +75,7 @@ export default async function HouseholdPage() {
             </div>
             <CopyInvite
               code={bundle.household.inviteCode}
+              bootstrap={bundle.bootstrap}
               label={d.copyLink}
               copiedLabel={d.copied}
             />

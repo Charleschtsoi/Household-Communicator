@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { clearDbCookie } from "./store";
 
 export const SESSION_COOKIE = "hc_session";
 
@@ -34,4 +35,5 @@ export async function setSession(session: Session) {
 export async function clearSession() {
   const jar = await cookies();
   jar.delete(SESSION_COOKIE);
+  await clearDbCookie();
 }

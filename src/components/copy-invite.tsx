@@ -4,10 +4,12 @@ import { useState } from "react";
 
 export function CopyInvite({
   code,
+  bootstrap,
   label,
   copiedLabel,
 }: {
   code: string;
+  bootstrap?: string;
   label: string;
   copiedLabel: string;
 }) {
@@ -15,7 +17,9 @@ export function CopyInvite({
 
   async function onCopy() {
     const origin = window.location.origin;
-    const link = `${origin}/join?code=${encodeURIComponent(code)}`;
+    const params = new URLSearchParams({ code });
+    if (bootstrap) params.set("bootstrap", bootstrap);
+    const link = `${origin}/join?${params.toString()}`;
     await navigator.clipboard.writeText(`${code}\n${link}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 1600);

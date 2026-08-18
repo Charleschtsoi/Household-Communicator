@@ -9,9 +9,15 @@ import type { Locale } from "@/lib/types";
 export default async function JoinPage({
   searchParams,
 }: {
-  searchParams: Promise<{ code?: string; error?: string }>;
+  searchParams: Promise<{ code?: string; error?: string; bootstrap?: string }>;
 }) {
-  if (await getSession()) redirect("/today");
+  const session = await getSession();
+  if (session) {
+    const { getMember } = await import("@/lib/store");
+    const member = await getMember(session.memberId);
+    if (member) redirect("/today");
+    // Orphan session: stay on join rather than looping through /today
+  }
   const locale = ((await cookies()).get("hc_locale")?.value as Locale) || "en";
   const d = t(locale);
   const params = await searchParams;
@@ -31,6 +37,9 @@ export default async function JoinPage({
       </h1>
       <form action={joinHouseholdAction} className="mt-6 grid gap-4">
         <input type="hidden" name="locale" value={locale} />
+        {params.bootstrap ? (
+          <input type="hidden" name="bootstrap" value={params.bootstrap} />
+        ) : null}
         <label className="grid gap-1.5 text-xs font-semibold text-muted">
           {d.inviteCode}
           <input
