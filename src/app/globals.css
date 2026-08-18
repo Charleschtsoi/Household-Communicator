@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #2a2420;
+  --muted: #6e635a;
+  --paper: #f7ebe3;
+  --panel: #fff8f2;
+  --line: #e5d5c8;
+  --accent: #2f6f66;
+  --accent-soft: #d9ebe7;
+  --apricot: #e8a87c;
+  --urgent: #b2473e;
+  --urgent-soft: #f6e1de;
+  --chip: #efe4da;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-paper: var(--paper);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-apricot: var(--apricot);
+  --color-urgent: var(--urgent);
+  --color-urgent-soft: var(--urgent-soft);
+  --color-chip: var(--chip);
+  --font-sans: var(--font-figtree);
+  --font-display: var(--font-bricolage);
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 0% 0%, #f3d9c8 0%, transparent 42%),
+    radial-gradient(ellipse at 100% 8%, #d7ebe4 0%, transparent 38%),
+    linear-gradient(180deg, #f8efe7, #f3e6dc);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+.phone-shell {
+  max-width: 28rem;
+  margin-inline: auto;
+  min-height: 100dvh;
+  background: linear-gradient(165deg, rgba(255, 248, 242, 0.96), rgba(255, 243, 234, 0.98));
+  border-inline: 1px solid var(--line);
+}
+
+@media (min-width: 640px) {
+  .phone-shell {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    min-height: calc(100dvh - 3rem);
+    border-radius: 1.75rem;
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 48px rgba(74, 48, 32, 0.12);
+    overflow: hidden;
+  }
+}
