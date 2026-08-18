@@ -57,11 +57,11 @@ export default async function TodayPage() {
                   <div key={need.id} className="rounded-2xl border border-line bg-white p-3">
                     <div className="font-semibold">{need.name}</div>
                     <div className="mt-1 text-xs text-muted">
-                      {categoryLabel(member.locale, need.category)} · qty {need.quantity} ·{" "}
+                      {categoryLabel(member.locale, need.category)} · {d.qty} {need.quantity} ·{" "}
                       {need.claimedById ? nameById[need.claimedById] : d.unclaimed}
                     </div>
                     <span className="mt-2 inline-flex rounded-md bg-urgent-soft px-2 py-0.5 text-[0.72rem] font-bold text-urgent">
-                      {d.urgent.split(" ")[0]}
+                      {d.urgentChip}
                     </span>
                   </div>
                 ))

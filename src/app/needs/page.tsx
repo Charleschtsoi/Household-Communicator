@@ -56,7 +56,7 @@ export default async function NeedsPage() {
                   <div className="mt-1 text-xs text-muted">
                     {need.claimedById
                       ? `${d.claimed} · ${nameById[need.claimedById]}`
-                      : `${d.open} · qty ${need.quantity}`}
+                      : `${d.open} · ${d.qty} ${need.quantity}`}
                     {need.recurringCadence
                       ? ` · ${cadenceLabel(member.locale, need.recurringCadence)}`
                       : ""}
@@ -64,7 +64,7 @@ export default async function NeedsPage() {
                   <div className="mt-2 flex flex-wrap items-center gap-1.5">
                     {need.urgent ? (
                       <span className="rounded-md bg-urgent-soft px-2 py-0.5 text-[0.72rem] font-bold text-urgent">
-                        Urgent
+                        {d.urgentChip}
                       </span>
                     ) : null}
                     <NeedActions

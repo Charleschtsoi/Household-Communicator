@@ -2,17 +2,18 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createHouseholdAction } from "@/lib/actions";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { getSession } from "@/lib/session";
-import { t } from "@/lib/i18n";
-import type { Locale } from "@/lib/types";
+import { parseLocale, t } from "@/lib/i18n";
 
 export default async function CreatePage() {
   if (await getSession()) redirect("/today");
-  const locale = ((await cookies()).get("hc_locale")?.value as Locale) || "en";
+  const locale = parseLocale((await cookies()).get("hc_locale")?.value);
   const d = t(locale);
 
   return (
     <main className="flex min-h-dvh flex-col px-5 pb-8 pt-14">
+      <LanguageSwitcher locale={locale} next="/create" />
       <h1 className="font-[family-name:var(--font-bricolage)] text-[1.75rem] font-bold tracking-tight">
         {d.createHousehold}
       </h1>
