@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/bottom-nav";
+import { SessionRecovery } from "@/components/session-recovery";
 import { getSession } from "@/lib/session";
 import { getHouseholdBundle, getMember } from "@/lib/store";
 import { cadenceLabel, categoryLabel, presenceLabel, t } from "@/lib/i18n";
@@ -9,9 +10,8 @@ export default async function TodayPage() {
   const session = await getSession();
   if (!session) redirect("/");
   const member = await getMember(session.memberId);
-  if (!member) redirect("/");
-  const bundle = await getHouseholdBundle(session.householdId);
-  if (!bundle) redirect("/");
+  const bundle = member ? await getHouseholdBundle(session.householdId) : null;
+  if (!member || !bundle) return <SessionRecovery />;
   const d = t(member.locale);
 
   const openNeeds = bundle.needs.filter((n) => n.status !== "bought");

@@ -37,12 +37,14 @@ export async function joinHouseholdAction(formData: FormData) {
   const inviteCode = String(formData.get("inviteCode") || "").trim();
   const displayName = String(formData.get("displayName") || "").trim();
   const locale = localeSchema.parse(String(formData.get("locale") || "en"));
+  const bootstrap = String(formData.get("bootstrap") || "").trim() || null;
   if (!inviteCode || !displayName) throw new Error("MISSING_FIELDS");
   try {
     const { household, member } = await joinHousehold({
       inviteCode,
       displayName,
       locale,
+      bootstrap,
     });
     await setSession({ householdId: household.id, memberId: member.id });
   } catch (e) {

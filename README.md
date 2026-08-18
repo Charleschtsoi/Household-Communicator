@@ -27,11 +27,13 @@ Open http://localhost:3000
 
 ## Deploy (Vercel)
 
-```bash
-npx vercel --prod --token "$VERCEL_TOKEN"
-```
+On Vercel the MVP persists household data in an **httpOnly cookie** (serverless-safe across instances). Redeploy after pulling latest for the blank `/today` fix.
 
-On Vercel the MVP uses an in-memory store (serverless-safe). Data can reset on cold starts until we plug in a real database.
+Multi-device sync is still limited until a shared database (e.g. Postgres/Upstash) is added.
+
+```bash
+npx vercel --prod
+```
 
 ## Design
 

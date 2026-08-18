@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { cookies } from "next/headers";
 import { customAlphabet } from "nanoid";
 import type {
   Category,
@@ -18,11 +19,10 @@ const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 12);
 const inviteCode = customAlphabet("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", 4);
 
 const isVercel = Boolean(process.env.VERCEL);
-const DATA_DIR = isVercel ? path.join("/tmp", "household-communicator") : path.join(process.cwd(), "data");
+const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "store.json");
-
-type GlobalStore = { __hcDb?: Db; __hcWriteChain?: Promise<void> };
-const g = globalThis as typeof globalThis & GlobalStore;
+export const DB_COOKIE = "hc_db";
+const COOKIE_MAX = 3500; // stay under typical 4KB cookie limits
 
 const emptyDb = (): Db => ({
   households: [],
@@ -35,41 +35,118 @@ function cloneDb(db: Db): Db {
   return JSON.parse(JSON.stringify(db)) as Db;
 }
 
-async function ensureStore() {
-  if (isVercel) {
-    if (!g.__hcDb) g.__hcDb = emptyDb();
-    return;
-  }
-  await fs.mkdir(DATA_DIR, { recursive: true });
+function pruneDb(db: Db): Db {
+  const next = cloneDb(db);
+  const bought = next.needs
+    .filter((n) => n.status === "bought")
+    .sort((a, b) => (b.boughtAt || "").localeCompare(a.boughtAt || ""));
+  const keepBought = new Set(bought.slice(0, 40).map((n) => n.id));
+  next.needs = next.needs.filter((n) => n.status !== "bought" || keepBought.has(n.id));
+  return next;
+}
+
+function encodeDb(db: Db): string {
+  return Buffer.from(JSON.stringify(pruneDb(db)), "utf8").toString("base64url");
+}
+
+function decodeDb(raw: string | undefined): Db | null {
+  if (!raw) return null;
   try {
-    await fs.access(DATA_FILE);
+    const json = Buffer.from(raw, "base64url").toString("utf8");
+    const parsed = JSON.parse(json) as Db;
+    if (!parsed.households || !parsed.members || !parsed.needs || !parsed.presence) return null;
+    return parsed;
   } catch {
-    await fs.writeFile(DATA_FILE, JSON.stringify(emptyDb(), null, 2), "utf8");
+    try {
+      return JSON.parse(decodeURIComponent(raw)) as Db;
+    } catch {
+      return null;
+    }
   }
 }
 
 async function readDb(): Promise<Db> {
-  await ensureStore();
-  if (isVercel) return cloneDb(g.__hcDb ?? emptyDb());
-  const raw = await fs.readFile(DATA_FILE, "utf8");
-  return JSON.parse(raw) as Db;
+  if (isVercel) {
+    const jar = await cookies();
+    return cloneDb(decodeDb(jar.get(DB_COOKIE)?.value) ?? emptyDb());
+  }
+  await fs.mkdir(DATA_DIR, { recursive: true });
+  try {
+    const raw = await fs.readFile(DATA_FILE, "utf8");
+    return JSON.parse(raw) as Db;
+  } catch {
+    const db = emptyDb();
+    await fs.writeFile(DATA_FILE, JSON.stringify(db, null, 2), "utf8");
+    return db;
+  }
 }
 
 async function writeDb(db: Db) {
-  await ensureStore();
+  const pruned = pruneDb(db);
   if (isVercel) {
-    g.__hcDb = cloneDb(db);
-    // Best-effort mirror to /tmp for warm-instance continuity
-    g.__hcWriteChain = (g.__hcWriteChain ?? Promise.resolve())
-      .catch(() => undefined)
-      .then(async () => {
-        await fs.mkdir(DATA_DIR, { recursive: true });
-        await fs.writeFile(DATA_FILE, JSON.stringify(db), "utf8");
-      });
-    await g.__hcWriteChain;
+    const jar = await cookies();
+    let payload = encodeDb(pruned);
+    // If still too large, drop older bought rows more aggressively
+    if (payload.length > COOKIE_MAX) {
+      pruned.needs = pruned.needs.filter((n) => n.status !== "bought").concat(
+        pruned.needs
+          .filter((n) => n.status === "bought")
+          .sort((a, b) => (b.boughtAt || "").localeCompare(a.boughtAt || ""))
+          .slice(0, 10),
+      );
+      payload = encodeDb(pruned);
+    }
+    jar.set(DB_COOKIE, payload, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      secure: true,
+      maxAge: 60 * 60 * 24 * 180,
+    });
     return;
   }
-  await fs.writeFile(DATA_FILE, JSON.stringify(db, null, 2), "utf8");
+  await fs.mkdir(DATA_DIR, { recursive: true });
+  await fs.writeFile(DATA_FILE, JSON.stringify(pruned, null, 2), "utf8");
+}
+
+export async function clearDbCookie() {
+  if (!isVercel) return;
+  const jar = await cookies();
+  jar.delete(DB_COOKIE);
+}
+
+export function exportHouseholdBootstrap(db: Db, householdId: string): string {
+  const household = db.households.find((h) => h.id === householdId);
+  if (!household) return "";
+  const slice: Db = {
+    households: [household],
+    members: db.members.filter((m) => m.householdId === householdId),
+    needs: db.needs.filter((n) => n.householdId === householdId && n.status !== "bought"),
+    presence: db.presence.filter((p) => p.householdId === householdId),
+  };
+  return encodeDb(slice);
+}
+
+export async function importHouseholdBootstrap(raw: string) {
+  const incoming = decodeDb(raw);
+  if (!incoming || incoming.households.length === 0) throw new Error("BAD_BOOTSTRAP");
+  const db = await readDb();
+  for (const h of incoming.households) {
+    if (!db.households.some((x) => x.id === h.id)) db.households.push(h);
+  }
+  for (const m of incoming.members) {
+    if (!db.members.some((x) => x.id === m.id)) db.members.push(m);
+  }
+  for (const n of incoming.needs) {
+    if (!db.needs.some((x) => x.id === n.id)) db.needs.push(n);
+  }
+  for (const p of incoming.presence) {
+    const idx = db.presence.findIndex((x) => x.memberId === p.memberId);
+    if (idx >= 0) db.presence[idx] = p;
+    else db.presence.push(p);
+  }
+  await writeDb(db);
+  return incoming.households[0];
 }
 
 function addMonths(iso: string, months: number) {
@@ -122,7 +199,15 @@ export async function joinHousehold(input: {
   inviteCode: string;
   displayName: string;
   locale: Locale;
+  bootstrap?: string | null;
 }) {
+  if (input.bootstrap) {
+    try {
+      await importHouseholdBootstrap(input.bootstrap);
+    } catch {
+      // continue; may already exist via invite code in local store
+    }
+  }
   const db = await readDb();
   const code = input.inviteCode.trim().toUpperCase();
   const household = db.households.find((h) => h.inviteCode === code);
@@ -151,7 +236,7 @@ export async function getHouseholdBundle(householdId: string) {
     .filter((n) => n.householdId === householdId)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const presence = db.presence.filter((p) => p.householdId === householdId);
-  return { household, members, needs, presence };
+  return { household, members, needs, presence, bootstrap: exportHouseholdBootstrap(db, householdId) };
 }
 
 export async function getMember(memberId: string) {
@@ -242,10 +327,8 @@ export async function markBought(input: {
       boughtAt: null,
       boughtById: null,
       amount: null,
-      createdAt: nextRecurringDate(now, need.recurringCadence),
+      createdAt: now,
     };
-    // Keep createdAt as schedule marker; also stamp a real open time for sorting
-    next.createdAt = now;
     db.needs.push(next);
   }
 
