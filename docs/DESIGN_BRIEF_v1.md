@@ -56,8 +56,9 @@ Household Communicator is a mobile-web household board for shared purchase needs
 
 ## Figma
 
-- Target team recents: user-provided Figma team files URL
-- Blocker: Figma MCP authentication required before creating the Design file
+- Hi-fi file: https://www.figma.com/design/pQsMRDfj2A0gfs8aSO2tTO/Household-Communicator-Hi-fi-v1
+- Page: Mobile Hi-fi v1
+- Frames: O1 Welcome · O2 Create · O3 Invite · O4 First need · T1 Today · N1 Needs · N3 Mark Bought · P1 Presence · H1 Household · Cover
 
 ## 60s success
 
