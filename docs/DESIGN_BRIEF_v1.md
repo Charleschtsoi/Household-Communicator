@@ -56,7 +56,8 @@ Household membership hard-stops at **10**. Invite UI disables with a clear messa
 
 https://www.figma.com/design/pQsMRDfj2A0gfs8aSO2tTO/Household-Communicator-Hi-fi-v1
 
+Frames: O1 Welcome · O2 Create · O3 Invite · O4 First need · T1 Today · **T1b Today empty → Add need** · N1 Needs · N3 Mark Bought · P1 Presence · H1 Household · Cover · Round-3 note
+
 ## 60s success
 
 Create household → invite via link/code → add first need.
-EOF
