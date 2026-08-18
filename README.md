@@ -25,6 +25,14 @@ Open http://localhost:3000
 - File-backed JSON store in `data/store.json`  
 - EN + 繁體中文 UI · English product name  
 
+## Deploy (Vercel)
+
+```bash
+npx vercel --prod --token "$VERCEL_TOKEN"
+```
+
+On Vercel the MVP uses an in-memory store (serverless-safe). Data can reset on cold starts until we plug in a real database.
+
 ## Design
 
 - [Design brief](docs/DESIGN_BRIEF_v1.md)

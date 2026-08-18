@@ -17,8 +17,12 @@ import { MAX_HOUSEHOLD_MEMBERS } from "./types";
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 12);
 const inviteCode = customAlphabet("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", 4);
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const isVercel = Boolean(process.env.VERCEL);
+const DATA_DIR = isVercel ? path.join("/tmp", "household-communicator") : path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "store.json");
+
+type GlobalStore = { __hcDb?: Db; __hcWriteChain?: Promise<void> };
+const g = globalThis as typeof globalThis & GlobalStore;
 
 const emptyDb = (): Db => ({
   households: [],
@@ -27,7 +31,15 @@ const emptyDb = (): Db => ({
   presence: [],
 });
 
+function cloneDb(db: Db): Db {
+  return JSON.parse(JSON.stringify(db)) as Db;
+}
+
 async function ensureStore() {
+  if (isVercel) {
+    if (!g.__hcDb) g.__hcDb = emptyDb();
+    return;
+  }
   await fs.mkdir(DATA_DIR, { recursive: true });
   try {
     await fs.access(DATA_FILE);
@@ -38,12 +50,25 @@ async function ensureStore() {
 
 async function readDb(): Promise<Db> {
   await ensureStore();
+  if (isVercel) return cloneDb(g.__hcDb ?? emptyDb());
   const raw = await fs.readFile(DATA_FILE, "utf8");
   return JSON.parse(raw) as Db;
 }
 
 async function writeDb(db: Db) {
   await ensureStore();
+  if (isVercel) {
+    g.__hcDb = cloneDb(db);
+    // Best-effort mirror to /tmp for warm-instance continuity
+    g.__hcWriteChain = (g.__hcWriteChain ?? Promise.resolve())
+      .catch(() => undefined)
+      .then(async () => {
+        await fs.mkdir(DATA_DIR, { recursive: true });
+        await fs.writeFile(DATA_FILE, JSON.stringify(db), "utf8");
+      });
+    await g.__hcWriteChain;
+    return;
+  }
   await fs.writeFile(DATA_FILE, JSON.stringify(db, null, 2), "utf8");
 }
 
