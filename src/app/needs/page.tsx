@@ -26,17 +26,20 @@ export default async function NeedsPage() {
         </h1>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-1.5">
-        <span className="rounded-md bg-accent-soft px-2 py-0.5 text-[0.72rem] font-bold text-accent">
-          {d.filtersOpen}
-        </span>
-        <span className="rounded-md bg-chip px-2 py-0.5 text-[0.72rem] font-bold text-muted">
-          {d.filtersClaimed}
-        </span>
-        <span className="rounded-md bg-chip px-2 py-0.5 text-[0.72rem] font-bold text-muted">
-          {d.filtersRecurring}
-        </span>
-      </div>
+      <p className="mb-4 text-sm leading-relaxed text-muted">{d.openNeeds}</p>
+
+      {openNeeds.length === 0 ? (
+        <div className="rounded-2xl border border-line bg-white p-5">
+          <h2 className="font-[family-name:var(--font-bricolage)] text-xl font-bold">{d.nothingYet}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted">{d.nothingHint}</p>
+          <Link
+            href="/needs/new"
+            className="mt-4 inline-flex h-12 w-full items-center justify-center rounded-xl bg-accent text-sm font-bold text-white"
+          >
+            {d.addNeed}
+          </Link>
+        </div>
+      ) : null}
 
       {CATEGORIES.map((cat) => {
         const rows = openNeeds.filter((n) => n.category === cat);
@@ -89,12 +92,14 @@ export default async function NeedsPage() {
         );
       })}
 
-      <Link
-        href="/needs/new"
-        className="sticky bottom-16 mt-4 inline-flex h-12 items-center justify-center rounded-xl bg-accent text-sm font-bold text-white"
-      >
-        + {d.addNeed}
-      </Link>
+      {openNeeds.length > 0 ? (
+        <Link
+          href="/needs/new"
+          className="sticky bottom-16 mt-4 inline-flex h-12 items-center justify-center rounded-xl bg-accent text-sm font-bold text-white"
+        >
+          + {d.addNeed}
+        </Link>
+      ) : null}
 
       <BottomNav active="needs" locale={member.locale} />
     </main>

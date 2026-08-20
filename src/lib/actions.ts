@@ -111,8 +111,9 @@ export async function markBoughtAction(formData: FormData) {
   });
   revalidatePath("/today");
   revalidatePath("/needs");
+  revalidatePath("/record");
   revalidatePath("/household");
-  redirect("/needs");
+  redirect("/record");
 }
 
 export async function setPresenceAction(formData: FormData) {
@@ -165,6 +166,7 @@ export async function setLocaleAction(formData: FormData) {
     "/needs",
     "/needs/new",
     "/presence",
+    "/record",
     "/household",
   ]) {
     revalidatePath(path);
