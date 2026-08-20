@@ -45,6 +45,9 @@ export default async function HouseholdPage() {
             {d.householdTotal} · ${Math.round(householdTotal)} HKD
           </div>
           <div className="mt-1 text-xs text-muted">{d.optionalAmounts}</div>
+          <Link href="/record" className="mt-2 inline-block text-sm font-bold text-accent">
+            {d.record} →
+          </Link>
         </div>
       </section>
 

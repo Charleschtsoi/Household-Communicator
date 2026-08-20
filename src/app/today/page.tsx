@@ -14,10 +14,11 @@ export default async function TodayPage() {
   if (!member || !bundle) return <SessionRecovery />;
   const d = t(member.locale);
 
+  // Shopping board only — bought items belong on Record, not here.
   const openNeeds = bundle.needs.filter((n) => n.status !== "bought");
   const urgent = openNeeds.filter((n) => n.urgent);
   const presenceRows = bundle.presence.filter((p) => p.status !== "home");
-  const empty = urgent.length === 0 && openNeeds.length === 0;
+  const empty = openNeeds.length === 0;
 
   const nameById = Object.fromEntries(bundle.members.map((m) => [m.id, m.displayName]));
 
@@ -45,15 +46,13 @@ export default async function TodayPage() {
         </div>
       ) : (
         <>
-          <section className="mb-4">
-            <h2 className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">
-              {d.urgentSection}
-            </h2>
-            <div className="grid gap-2">
-              {urgent.length === 0 ? (
-                <p className="text-sm text-muted">—</p>
-              ) : (
-                urgent.map((need) => (
+          {urgent.length > 0 ? (
+            <section className="mb-4">
+              <h2 className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">
+                {d.urgentSection}
+              </h2>
+              <div className="grid gap-2">
+                {urgent.map((need) => (
                   <div key={need.id} className="rounded-2xl border border-line bg-white p-3">
                     <div className="font-semibold">{need.name}</div>
                     <div className="mt-1 text-xs text-muted">
@@ -64,20 +63,18 @@ export default async function TodayPage() {
                       {d.urgentChip}
                     </span>
                   </div>
-                ))
-              )}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
-          <section className="mb-4">
-            <h2 className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">
-              {d.presenceSection}
-            </h2>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {presenceRows.length === 0 ? (
-                <p className="text-sm text-muted">—</p>
-              ) : (
-                presenceRows.map((p) => (
+          {presenceRows.length > 0 ? (
+            <section className="mb-4">
+              <h2 className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">
+                {d.presenceSection}
+              </h2>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {presenceRows.map((p) => (
                   <div
                     key={p.memberId}
                     className="min-w-[7.5rem] rounded-xl border border-line bg-white p-2.5"
@@ -94,10 +91,10 @@ export default async function TodayPage() {
                       ) : null}
                     </div>
                   </div>
-                ))
-              )}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           <section className="mb-4">
             <h2 className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">
