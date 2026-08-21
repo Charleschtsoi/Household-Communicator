@@ -26,7 +26,7 @@ export default async function NeedsPage() {
         </h1>
       </div>
 
-      <p className="mb-4 text-sm leading-relaxed text-muted">{d.openNeeds}</p>
+      <p className="mb-4 text-sm leading-relaxed text-muted">{d.needsHint}</p>
 
       {openNeeds.length === 0 ? (
         <div className="rounded-2xl border border-line bg-white p-5">

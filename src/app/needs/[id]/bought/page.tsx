@@ -64,7 +64,7 @@ export default async function BoughtPage({
           {d.currency}
           <input
             disabled
-            value="HKD"
+            value={d.currencyCode}
             className="h-11 rounded-xl border border-line bg-white px-3 text-sm font-medium opacity-80"
           />
         </label>

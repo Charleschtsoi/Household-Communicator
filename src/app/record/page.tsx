@@ -42,7 +42,7 @@ export default async function RecordPage() {
           {d.thisMonth}
         </div>
         <div className="mt-1 font-[family-name:var(--font-bricolage)] text-2xl font-bold">
-          ${Math.round(householdTotal)} HKD
+          ${Math.round(householdTotal)} {d.currencyCode}
         </div>
         <div className="mt-1 text-xs text-muted">{d.optionalAmounts}</div>
       </section>

@@ -22,9 +22,10 @@ export default async function HouseholdPage() {
 
   return (
     <main className="flex min-h-dvh flex-col px-5 pt-12">
-      <h1 className="mb-4 font-[family-name:var(--font-bricolage)] text-[1.75rem] font-bold tracking-tight">
+      <h1 className="mb-1 font-[family-name:var(--font-bricolage)] text-[1.75rem] font-bold tracking-tight">
         {d.household}
       </h1>
+      <p className="mb-4 text-sm font-medium text-muted">{bundle.household.name}</p>
 
       <section className="mb-5">
         <h2 className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">
@@ -42,18 +43,18 @@ export default async function HouseholdPage() {
         </div>
         <div className="rounded-2xl border border-line bg-white p-3">
           <div className="font-semibold">
-            {d.householdTotal} · ${Math.round(householdTotal)} HKD
+            {d.householdTotal} · ${Math.round(householdTotal)} {d.currencyCode}
           </div>
           <div className="mt-1 text-xs text-muted">{d.optionalAmounts}</div>
           <Link href="/record" className="mt-2 inline-block text-sm font-bold text-accent">
-            {d.record} →
+            {d.viewRecord} →
           </Link>
         </div>
       </section>
 
       <section className="mb-5">
         <h2 className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">
-          {bundle.household.name}
+          {d.members}
         </h2>
         <div className="grid gap-2">
           {bundle.members.map((m) => (
