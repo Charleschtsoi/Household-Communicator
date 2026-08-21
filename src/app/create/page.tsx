@@ -24,7 +24,7 @@ export default async function CreatePage() {
           <input
             name="householdName"
             required
-            defaultValue="Flat 12B"
+            placeholder={d.householdNamePlaceholder}
             className="h-11 rounded-xl border border-line bg-white px-3 text-sm font-medium text-ink"
           />
         </label>
