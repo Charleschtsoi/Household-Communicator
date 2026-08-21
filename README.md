@@ -6,6 +6,7 @@ Mobile-web household board for **shared purchase needs** (hero), optional **out 
 
 ```bash
 npm install
+cp .env.example .env.local   # optional: add DATABASE_URL for Neon
 npm run dev
 ```
 
@@ -16,24 +17,34 @@ Open http://localhost:3000
 1. Create household + your name  
 2. Copy invite link/code  
 3. Add first need  
-4. Use Today / Needs / Household  
+4. Use Today / Needs / Record / Household  
 
-## Stack (V1 MVP assumptions)
+## Stack
 
 - Next.js App Router + TypeScript + Tailwind  
-- Cookie session (display name, no OAuth yet)  
-- File-backed JSON store in `data/store.json`  
+- Cookie session (`hc_session` — display name, no OAuth yet)  
+- **Durable store:** Neon Postgres when `DATABASE_URL` is set  
+- Fallback without DB: `data/store.json` locally, or httpOnly cookie on Vercel  
 - EN + 繁體中文 UI · English product name  
 
+## Neon (durable multi-device)
+
+1. Open your Neon project → **Dashboard → Connection details**  
+2. Copy the **pooled** connection string (`…-pooler…`)  
+3. Set it as `DATABASE_URL`:
+   - Local: `.env.local`
+   - Vercel: Project → Settings → Environment Variables → Production (and Preview)
+4. Redeploy. Tables are created automatically on first request (`sql/schema.sql`).
+
+With Neon, invite codes work across browsers/devices — no cookie bootstrap needed.
+
 ## Deploy (Vercel)
-
-On Vercel the MVP persists household data in an **httpOnly cookie** (serverless-safe across instances). Redeploy after pulling latest for the blank `/today` fix.
-
-Multi-device sync is still limited until a shared database (e.g. Postgres/Upstash) is added.
 
 ```bash
 npx vercel --prod
 ```
+
+Required for shared family data: `DATABASE_URL` pointing at Neon.
 
 ## Design
 
