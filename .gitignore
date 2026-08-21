@@ -43,5 +43,3 @@ next-env.d.ts
 
 # local MVP datastore
 /data
-
-# local file store
